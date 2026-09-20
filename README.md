@@ -1,20 +1,20 @@
 # Zippy
 
-A Huffman-coding based file compressor/decompressor written in C.
+A file compressor/decompressor built in C using Huffman coding.
 
 ## Prerequisites
 - GCC (or any C compiler)
 - Make
 
 ## Build
-\```bash
+```bash
 make
-\```
+```
 
 ## Usage
-\```bash
-./zippy <file>   # (Day 1: prints byte frequency table)
-\```
+```bash
+./zippy test.txt
+```
 
 ## Project Status
-Work in progress — see commit history for build phases.
+Work in progress :- prints byte frequency table
