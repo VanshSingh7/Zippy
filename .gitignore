@@ -1,0 +1,19 @@
+# Compiled binaries
+*.o
+*.obj
+zippy
+zippy_test
+*.exe
+*.out
+
+# Build directories
+build/
+bin/
+
+# IDE folders
+.vscode/
+.vs/
+
+# OS files
+.DS_Store
+Thumbs.db
