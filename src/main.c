@@ -86,39 +86,58 @@
 
 // checking bitio.c
 
+// #include <stdio.h>
+// #include "bitio.h"
+
+// int main(void) {
+//     // --- WRITE PHASE ---
+//     FILE *out = fopen("bittest.bin", "wb");
+//     BitWriter *bw = bitwriter_create(out);
+
+//     // known test sequence: 1,0,1,1,0,0,1,0,1  (9 bits — not a multiple of 8)
+//     int test_bits[] = {1, 0, 1, 1, 0, 0, 1, 0, 1};
+//     int n = 9;
+
+//     for (int i = 0; i < n; i++) {
+//         bitwriter_write_bit(bw, test_bits[i]);
+//     }
+//     bitwriter_flush(bw);   // pad and write the final partial byte
+
+//     bitwriter_free(bw);
+//     fclose(out);
+
+//     // --- READ PHASE ---
+//     FILE *in = fopen("bittest.bin", "rb");
+//     BitReader *br = bitreader_create(in);
+
+//     printf("Read back: ");
+//     for (int i = 0; i < n; i++) {
+//         int bit = bitreader_read_bit(br);
+//         printf("%d", bit);
+//     }
+//     printf("\n");
+
+//     bitreader_free(br);
+//     fclose(in);
+
+//     return 0;
+// }
+
+// testing whole current code
 #include <stdio.h>
-#include "bitio.h"
+#include "compress.h"
 
-int main(void) {
-    // --- WRITE PHASE ---
-    FILE *out = fopen("bittest.bin", "wb");
-    BitWriter *bw = bitwriter_create(out);
-
-    // known test sequence: 1,0,1,1,0,0,1,0,1  (9 bits — not a multiple of 8)
-    int test_bits[] = {1, 0, 1, 1, 0, 0, 1, 0, 1};
-    int n = 9;
-
-    for (int i = 0; i < n; i++) {
-        bitwriter_write_bit(bw, test_bits[i]);
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        printf("Usage: %s <input_file> <output_file>\n", argv[0]);
+        return 1;
     }
-    bitwriter_flush(bw);   // pad and write the final partial byte
 
-    bitwriter_free(bw);
-    fclose(out);
-
-    // --- READ PHASE ---
-    FILE *in = fopen("bittest.bin", "rb");
-    BitReader *br = bitreader_create(in);
-
-    printf("Read back: ");
-    for (int i = 0; i < n; i++) {
-        int bit = bitreader_read_bit(br);
-        printf("%d", bit);
+    if (compress_file(argv[1], argv[2]) != 0) {
+        printf("Compression failed\n");
+        return 1;
     }
-    printf("\n");
 
-    bitreader_free(br);
-    fclose(in);
-
+    printf("Compressed '%s' -> '%s'\n", argv[1], argv[2]);
     return 0;
 }

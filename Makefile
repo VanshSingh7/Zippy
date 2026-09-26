@@ -3,7 +3,9 @@ CFLAGS = -Wall -Iinclude
 # SRC = src/main.c src/freq.c
 # SRC = src/main.c src/heap.c
 # SRC = src/main.c src/freq.c src/heap.c src/tree.c
-SRC = src/main.c src/bitio.c
+# SRC = src/main.c src/bitio.c
+
+SRC = src/main.c src/freq.c src/heap.c src/tree.c src/bitio.c src/compress.c
 
 TARGET = zippy
 
