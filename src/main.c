@@ -124,20 +124,52 @@
 // }
 
 // testing whole current code
+// #include <stdio.h>
+// #include "compress.h"
+
+// int main(int argc, char *argv[]) {
+//     if (argc != 3) {
+//         printf("Usage: %s <input_file> <output_file>\n", argv[0]);
+//         return 1;
+//     }
+
+//     if (compress_file(argv[1], argv[2]) != 0) {
+//         printf("Compression failed\n");
+//         return 1;
+//     }
+
+//     printf("Compressed '%s' -> '%s'\n", argv[1], argv[2]);
+//     return 0;
+// }
+
+
+// decompress test
 #include <stdio.h>
 #include "compress.h"
+#include "decompress.h"
+#include <string.h>
 
 int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("Usage: %s <input_file> <output_file>\n", argv[0]);
+    if (argc != 4) {
+        printf("Usage: %s <compress|decompress> <input> <output>\n", argv[0]);
         return 1;
     }
 
-    if (compress_file(argv[1], argv[2]) != 0) {
-        printf("Compression failed\n");
+    int result;
+    if (strcmp(argv[1], "compress") == 0) {
+        result = compress_file(argv[2], argv[3]);
+    } else if (strcmp(argv[1], "decompress") == 0) {
+        result = decompress_file(argv[2], argv[3]);
+    } else {
+        printf("Unknown command '%s'\n", argv[1]);
         return 1;
     }
 
-    printf("Compressed '%s' -> '%s'\n", argv[1], argv[2]);
+    if (result != 0) {
+        printf("Operation failed\n");
+        return 1;
+    }
+
+    printf("Done: %s -> %s\n", argv[2], argv[3]);
     return 0;
 }
