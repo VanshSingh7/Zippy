@@ -144,32 +144,99 @@
 
 
 // decompress test
+// #include <stdio.h>
+// #include "compress.h"
+// #include "decompress.h"
+// #include <string.h>
+
+// int main(int argc, char *argv[]) {
+//     if (argc != 4) {
+//         printf("Usage: %s <compress|decompress> <input> <output>\n", argv[0]);
+//         return 1;
+//     }
+
+//     int result;
+//     if (strcmp(argv[1], "compress") == 0) {
+//         result = compress_file(argv[2], argv[3]);
+//     } else if (strcmp(argv[1], "decompress") == 0) {
+//         result = decompress_file(argv[2], argv[3]);
+//     } else {
+//         printf("Unknown command '%s'\n", argv[1]);
+//         return 1;
+//     }
+
+//     if (result != 0) {
+//         printf("Operation failed\n");
+//         return 1;
+//     }
+
+//     printf("Done: %s -> %s\n", argv[2], argv[3]);
+//     return 0;
+// }
+
+
+// -- Final Code --
 #include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
 #include "compress.h"
 #include "decompress.h"
-#include <string.h>
+
+long get_file_size(const char *path) {
+    struct stat st;
+    if (stat(path, &st) != 0) {
+        return -1;
+    }
+    return st.st_size;
+}
+
+void print_usage(const char *prog_name) {
+    printf("Zippy - a Huffman-coding file compressor\n\n");
+    printf("Usage:\n");
+    printf("  %s compress <input> <output>\n", prog_name);
+    printf("  %s decompress <input> <output>\n", prog_name);
+}
 
 int main(int argc, char *argv[]) {
     if (argc != 4) {
-        printf("Usage: %s <compress|decompress> <input> <output>\n", argv[0]);
+        print_usage(argv[0]);
         return 1;
     }
 
-    int result;
-    if (strcmp(argv[1], "compress") == 0) {
-        result = compress_file(argv[2], argv[3]);
-    } else if (strcmp(argv[1], "decompress") == 0) {
-        result = decompress_file(argv[2], argv[3]);
+    const char *command = argv[1];
+    const char *input_path = argv[2];
+    const char *output_path = argv[3];
+
+    if (strcmp(command, "compress") == 0) {
+        if (compress_file(input_path, output_path) != 0) {
+            printf("Error: compression failed\n");
+            return 1;
+        }
+
+        long original = get_file_size(input_path);
+        long compressed = get_file_size(output_path);
+
+        printf("Compressed '%s' -> '%s'\n", input_path, output_path);
+        if (original > 0) {
+            double ratio = 100.0 * (1.0 - ((double)compressed / (double)original));
+            printf("Original: %ld bytes, Compressed: %ld bytes (%.1f%% reduction)\n",
+                   original, compressed, ratio);
+        } else {
+            printf("Original: %ld bytes, Compressed: %ld bytes\n", original, compressed);
+        }
+
+    } else if (strcmp(command, "decompress") == 0) {
+        if (decompress_file(input_path, output_path) != 0) {
+            printf("Error: decompression failed\n");
+            return 1;
+        }
+        printf("Decompressed '%s' -> '%s'\n", input_path, output_path);
+
     } else {
-        printf("Unknown command '%s'\n", argv[1]);
+        printf("Error: unknown command '%s'\n\n", command);
+        print_usage(argv[0]);
         return 1;
     }
 
-    if (result != 0) {
-        printf("Operation failed\n");
-        return 1;
-    }
-
-    printf("Done: %s -> %s\n", argv[2], argv[3]);
     return 0;
 }

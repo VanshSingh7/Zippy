@@ -21,6 +21,19 @@ int compress_file(const char *input_path, const char *output_path) {
         }
     }
 
+    if (original_size == 0) {
+        FILE *out = fopen(output_path, "wb");
+        if (out == NULL) {
+            return -1;
+        }
+        fwrite("ZPY1", 1, 4, out);
+        fwrite(&original_size, sizeof(unsigned long), 1, out);
+        unsigned short zero = 0;
+        fwrite(&zero, sizeof(unsigned short), 1, out);
+        fclose(out);
+        return 0;
+    }
+
     Node *root = build_tree(freq_table);
     char *codes[256];
     generate_codes(root, codes);
